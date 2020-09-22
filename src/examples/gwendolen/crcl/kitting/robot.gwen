@@ -1,0 +1,118 @@
+GWENDOLEN
+
+:name: robot
+
+:Initial Beliefs:
+
+:Reasoning Rules:
+
+:Initial Goals:
+
+:Plans:
+
++kit(Name, Small, Medium, Large) : { True } 
+<- 
+	print("New kit ", Name," Small gears ", Small, " Medium gears ", Medium," Large gears ", Large),
+	+!small_gears(Small) [perform];
+//	+!medium_gears(Medium) [perform],
+//	+!large_gears(Large) [perform];
+	
++!small_gears(Small) [perform] : { ~B kit_quantity(Name, Small, _, _) }
+<-
+	+!look_for_part(small) [perform],
+	+!set_grasp(small) [perform],
+	+!take_part(small) [perform],
+	+!look_for_slot(small) [perform],
+	+!place_part(small) [perform];
+
++!medium_gears(Medium) [perform] : { ~B kit_quantity(Name, _, Medium, _) }
+<-
+	+!look_for_part(medium) [perform],
+	+!set_grasp(medium) [perform],
+	+!take_part(medium) [perform],
+	+!look_for_slot(medium) [perform],
+	+!place_part(medium) [perform];
+	 
++!large_gears(Large) [perform] : { ~B kit_quantity(Name, _, _, Large) }
+<-
+	+!look_for_part(large) [perform],
+	+!set_grasp(large) [perform],
+	+!take_part(large) [perform],
+	+!look_for_slot(large) [perform],
+	+!place_part(large) [perform];
+	 
++!look_for_part(Size) [perform] : { True }
+<-
+	 look_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_look_part(Size, Result) [perform];
+	 
++!set_grasp(Size) [perform] : { True }
+<-
+	 set_grasp(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_set_grasp(Size, Result) [perform];
+	 
++!take_part(Size) [perform] : { True }
+<-
+	 take_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_take_part(Size, Result) [perform];
+	 
++!look_for_slot(Size) [perform] : { True }
+<-
+	 look_slot(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_look_slot(Size, Result) [perform];
+	 
++!place_part(Size) [perform] : { True }
+<-
+	 place_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_place_part(Size, Result) [perform];
+	 
++!check_action_result_look_part(Size, "true") [perform] : { True };
++!check_action_result_look_part(Size, "false") [perform] : { True }
+<-
+	 look_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_look_part(Size, Result) [perform];
+	 
++!check_action_result_set_grasp(Size, "true") [perform] : { True };
++!check_action_result_set_grasp(Size, "false") [perform] : { True }
+<-
+	 set_grasp(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_set_grasp(Size, Result) [perform];
+	 
++!check_action_result_take_part(Size, "true") [perform] : { True };
++!check_action_result_take_part(Size, "false") [perform] : { True }
+<-
+	 take_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_take_part(Size, Result) [perform];
+	 
++!check_action_result_look_slot(Size, "true") [perform] : { True };
++!check_action_result_look_slot(Size, "false") [perform] : { True }
+<-
+	 look_slot(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_look_slot(Size, Result) [perform];
+	 
++!check_action_result_place_part(Size, "true") [perform] : { True };
++!check_action_result_place_part(Size, "false") [perform] : { True }
+<-
+	 place_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_place_part(Size, Result) [perform];
+	 
