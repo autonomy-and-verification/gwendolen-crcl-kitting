@@ -2,14 +2,9 @@ package gwendolen.crcl.kitting;
 
 import ail.mas.DefaultEnvironment;
 import ail.syntax.Action;
-import ail.syntax.Literal;
-import ail.syntax.NumberTerm;
 import ail.syntax.NumberTermImpl;
 import ail.syntax.Predicate;
-import ail.syntax.Literal;
-import ail.syntax.StringTerm;
 import ail.syntax.StringTermImpl;
-import ail.syntax.Term;
 import ail.syntax.Unifier;
 import ail.util.AILexception;
 import java.util.Random;
@@ -32,12 +27,12 @@ public class KittingEnv extends DefaultEnvironment{
 		kit.addTerm(new NumberTermImpl(2));
 		addPercept(kit);
 		
-		Predicate kit_quantity = new Predicate("kit_quantity");
-		kit_quantity.addTerm(new StringTermImpl("s2b2"));
-		kit_quantity.addTerm(new NumberTermImpl(0));
-		kit_quantity.addTerm(new NumberTermImpl(0));
-		kit_quantity.addTerm(new NumberTermImpl(0));
-		addPercept(kit_quantity);
+//		Predicate kit_quantity = new Predicate("kit_quantity");
+//		kit_quantity.addTerm(new StringTermImpl("s2b2"));
+//		kit_quantity.addTerm(new NumberTermImpl(0));
+//		kit_quantity.addTerm(new NumberTermImpl(0));
+//		kit_quantity.addTerm(new NumberTermImpl(0));
+//		addPercept(kit_quantity);
 	}
 	
 	/*
@@ -109,7 +104,7 @@ public class KittingEnv extends DefaultEnvironment{
 				System.out.println("Action: "+actionname+" has failed!");
 			}
 		}
-		if (!actionname.equals("print")) {
+		if (!actionname.equals("print") || !actionname.equals("minus") || !actionname.equals("sum")) {
 			if (action_result) {
 				Predicate action_res = new Predicate("action_result");
 				action_res.addTerm(new StringTermImpl(""+false));

@@ -3,6 +3,11 @@ GWENDOLEN
 :name: robot
 
 :Initial Beliefs:
+gripper(part)
+tray(small,4)
+tray(medium,4)
+tray(large,2)
+kit_quantity("s2b2", 0, 0, 0)
 
 :Reasoning Rules:
 
@@ -13,68 +18,110 @@ GWENDOLEN
 +kit(Name, Small, Medium, Large) : { True } 
 <- 
 	print("New kit ", Name," Small gears ", Small, " Medium gears ", Medium," Large gears ", Large),
-	+!small_gears(Small) [perform];
-//	+!medium_gears(Medium) [perform],
-//	+!large_gears(Large) [perform];
-	
+	+!small_gears(Small) [perform],
+	+!medium_gears(Medium) [perform],
+	+!large_gears(Large) [perform];
+
++!small_gears(Small) [perform] : { B kit_quantity(Name, Small, _, _) } <- print("Completed small gears.");
 +!small_gears(Small) [perform] : { ~B kit_quantity(Name, Small, _, _) }
 <-
 	+!look_for_part(small) [perform],
 	+!set_grasp(small) [perform],
 	+!take_part(small) [perform],
 	+!look_for_slot(small) [perform],
-	+!place_part(small) [perform];
+	+!place_part(small) [perform],
+	+!small_gears(Small) [perform];
 
++!medium_gears(Medium) [perform] : { B kit_quantity(Name, _, Medium, _) } <- print("Completed medium gears.");
 +!medium_gears(Medium) [perform] : { ~B kit_quantity(Name, _, Medium, _) }
 <-
 	+!look_for_part(medium) [perform],
 	+!set_grasp(medium) [perform],
 	+!take_part(medium) [perform],
 	+!look_for_slot(medium) [perform],
-	+!place_part(medium) [perform];
+	+!place_part(medium) [perform],
+	+!medium_gears(Medium) [perform];
 	 
++!large_gears(Large) [perform] : { B kit_quantity(Name, _, _, Large) } <- print("Completed large gears.");
 +!large_gears(Large) [perform] : { ~B kit_quantity(Name, _, _, Large) }
 <-
 	+!look_for_part(large) [perform],
 	+!set_grasp(large) [perform],
 	+!take_part(large) [perform],
 	+!look_for_slot(large) [perform],
-	+!place_part(large) [perform];
+	+!place_part(large) [perform],
+	+!large_gears(Large) [perform];
 	 
-+!look_for_part(Size) [perform] : { True }
++!look_for_part(Size) [perform] : { B gripper(part), ~B gripper_grasped(_)}
 <-
 	 look_part(Size),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_look_part(Size, Result) [perform];
+	 +!check_action_result_look_part(Size, Result) [perform],
+	 +part_found(Size);
 	 
-+!set_grasp(Size) [perform] : { True }
++!set_grasp(Size) [perform] : { B gripper(_), ~B gripper_grasped(_) }
 <-
 	 set_grasp(Size),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_set_grasp(Size, Result) [perform];
+	 +!check_action_result_set_grasp(Size, Result) [perform],
+	 +grasp_set(Size);
 	 
-+!take_part(Size) [perform] : { True }
++!take_part(Size) [perform] : { B gripper(_), ~B gripper_grasped(_), B tray(Size, Quantity), 0 < Quantity, B part_found(Size), B grasp_set(Size) }
 <-
 	 take_part(Size),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_take_part(Size, Result) [perform];
+	 +!check_action_result_take_part(Size, Result) [perform],
+	 -tray(Size, Quantity),
+	 minus(Quantity, 1, NewQuantity),
+	 +tray(Size, NewQuantity),
+	 -part_found(Size),
+	 -grasp_set(Size),
+	 +gripper_grasped(Size);
 	 
-+!look_for_slot(Size) [perform] : { True }
++!look_for_slot(Size) [perform] : { B gripper_grasped(Size) }
 <-
 	 look_slot(Size),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_look_slot(Size, Result) [perform];
+	 +!check_action_result_look_slot(Size, Result) [perform],
+	 +slot_found(Size);
 	 
-+!place_part(Size) [perform] : { True }
++!place_part(small) [perform] : { B kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity), B kit(Name, MaxSmallQuantity, MaxMediumQuantity, MaxLargeQuantity), SmallQuantity < MaxSmallQuantity }
 <-
 	 place_part(Size),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_place_part(Size, Result) [perform];
+	 +!check_action_result_place_part(Size, Result) [perform],
+	 -slot_found(Size),
+	 -gripper_grasped(Size),
+	 -kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity),
+	 sum(SmallQuantity, 1, NewSmallQuantity),
+	 +kit_quantity(Name, NewSmallQuantity, MediumQuantity, LargeQuantity);
++!place_part(medium) [perform] : { B kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity), B kit(Name, MaxSmallQuantity, MaxMediumQuantity, MaxLargeQuantity), MediumQuantity < MaxMediumQuantity }
+<-
+	 place_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_place_part(Size, Result) [perform],
+	 -slot_found(Size),
+	 -gripper_grasped(Size),
+	 -kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity),
+	 sum(MediumQuantity, 1, NewMediumQuantity),
+	 +kit_quantity(Name, SmallQuantity, NewMediumQuantity, LargeQuantity);
++!place_part(large) [perform] : { B kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity), B kit(Name, MaxSmallQuantity, MaxMediumQuantity, MaxLargeQuantity), LargeQuantity < MaxLargeQuantity }
+<-
+	 place_part(Size),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_place_part(Size, Result) [perform],
+	 -slot_found(Size),
+	 -gripper_grasped(Size),
+	 -kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity),
+	 sum(LargeQuantity, 1, NewLargeQuantity),
+	 +kit_quantity(Name, SmallQuantity, MediumQuantity, NewLargeQuantity);
 	 
 +!check_action_result_look_part(Size, "true") [perform] : { True };
 +!check_action_result_look_part(Size, "false") [perform] : { True }
