@@ -2,9 +2,12 @@ package gwendolen.crcl.kitting;
 
 import ail.mas.DefaultEnvironment;
 import ail.syntax.Action;
+import ail.syntax.ListTerm;
 import ail.syntax.NumberTermImpl;
 import ail.syntax.Predicate;
+import ail.syntax.StringTerm;
 import ail.syntax.StringTermImpl;
+import ail.syntax.Term;
 import ail.syntax.Unifier;
 import ail.util.AILexception;
 import java.util.Random;
@@ -21,10 +24,9 @@ public class KittingEnv extends DefaultEnvironment{
 		System.out.println("Environment started.");
 		
 		Predicate kit = new Predicate("kit");
-		kit.addTerm(new StringTermImpl("s2b2"));
-		kit.addTerm(new NumberTermImpl(2));
-		kit.addTerm(new NumberTermImpl(0));
-		kit.addTerm(new NumberTermImpl(2));
+		kit.addTerm(new StringTermImpl("kit_tray_1"));
+		kit.addTerm(new StringTermImpl("slot_1"));
+		kit.addTerm(new StringTermImpl("large"));
 		addPercept(kit);
 		
 //		Predicate kit_quantity = new Predicate("kit_quantity");
@@ -43,68 +45,35 @@ public class KittingEnv extends DefaultEnvironment{
 		String actionname = act.getFunctor();
 		boolean action_result = false;
 		System.out.println("Environment is simulating action: "+actionname);
-		if (actionname.equals("detach")) {
+		
+		if (actionname.equals("find_gear")) {
+			ListTerm slots = (ListTerm) act.getTerm(0);
+			for (Term slot : slots) {
+				if (!slot.toString().contains("empty")) {
+					Predicate gear = new Predicate("gear");
+					removePercept(gear);
+					gear.addTerm(new StringTermImpl(slot.toString()));
+					addPercept(gear);
+					break;
+				}
+			}
+		} else if (actionname.equals("move")) {
 			action_result = simulate_action(0.9, 1000);
 			if (!action_result) {
 				System.out.println("Action: "+actionname+" has failed!");
 			}
-		} else if (actionname.equals("take_part")) {
+		} else if (actionname.equals("open_gripper")) {
 			action_result = simulate_action(0.9, 1000);
 			if (!action_result) {
 				System.out.println("Action: "+actionname+" has failed!");
 			}
-		} else if (actionname.equals("take_tray")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("place_tray")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("create_kit")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("attach")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("place_kit")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("place_part")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("look_part")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("set_grasp")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("look_slot")) {
-			action_result = simulate_action(0.9, 1000);
-			if (!action_result) {
-				System.out.println("Action: "+actionname+" has failed!");
-			}
-		} else if (actionname.equals("take_kit")) {
+		} else if (actionname.equals("close_gripper")) {
 			action_result = simulate_action(0.9, 1000);
 			if (!action_result) {
 				System.out.println("Action: "+actionname+" has failed!");
 			}
 		}
-		if (!actionname.equals("print") || !actionname.equals("minus") || !actionname.equals("sum")) {
+		if (!actionname.equals("print") && !actionname.equals("minus") && !actionname.equals("sum") && !actionname.equals("find_gear")) {
 			if (action_result) {
 				Predicate action_res = new Predicate("action_result");
 				action_res.addTerm(new StringTermImpl(""+false));

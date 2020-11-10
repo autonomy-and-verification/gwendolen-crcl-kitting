@@ -3,11 +3,10 @@ GWENDOLEN
 :name: robot
 
 :Initial Beliefs:
-gripper(part)
-tray(small,4)
-tray(medium,4)
-tray(large,2)
-kit_quantity("s2b2", 0, 0, 0)
+gripper("open")
+gear_tray(gear_tray_1,"small",["gear_small_1","gear_small_2","gear_small_3"])
+gear_tray(gear_tray_1,"medium",["gear_medium_1","gear_medium_2","gear_medium_3"])
+gear_tray(gear_tray_1,"large",["empty","gear_large_2","gear_large_3"])
 
 :Reasoning Rules:
 
@@ -15,151 +14,65 @@ kit_quantity("s2b2", 0, 0, 0)
 
 :Plans:
 
-+kit(Name, Small, Medium, Large) : { True } 
-<- 
-	print("New kit ", Name," Small gears ", Small, " Medium gears ", Medium," Large gears ", Large),
-	+!small_gears(Small) [perform],
-	+!medium_gears(Medium) [perform],
-	+!large_gears(Large) [perform];
++!kitting(IdKitTray, Id, Size)  [perform] : { ~B grasped(_), B gear_tray(IdGearTray, Size, Slots) }
+<-
+	find_gear(Slots),
+	*gear(Gear),
+	+!move(Gear) [perform],
+	+!close_gripper(Gear) [perform],
+	+!move(Id) [perform],
+	+!open_gripper(Gear) [perform];
 
-+!small_gears(Small) [perform] : { B kit_quantity(Name, Small, _, _) } <- print("Completed small gears.");
-+!small_gears(Small) [perform] : { ~B kit_quantity(Name, Small, _, _) }
++kit(IdKitTray, Id, SizeSlot) : { True }
 <-
-	+!look_for_part(small) [perform],
-	+!set_grasp(small) [perform],
-	+!take_part(small) [perform],
-	+!look_for_slot(small) [perform],
-	+!place_part(small) [perform],
-	+!small_gears(Small) [perform];
-
-+!medium_gears(Medium) [perform] : { B kit_quantity(Name, _, Medium, _) } <- print("Completed medium gears.");
-+!medium_gears(Medium) [perform] : { ~B kit_quantity(Name, _, Medium, _) }
+	+!kitting(IdKitTray, Id, SizeSlot) [perform];
+	
++!move(Location) [perform] : { True }
 <-
-	+!look_for_part(medium) [perform],
-	+!set_grasp(medium) [perform],
-	+!take_part(medium) [perform],
-	+!look_for_slot(medium) [perform],
-	+!place_part(medium) [perform],
-	+!medium_gears(Medium) [perform];
-	 
-+!large_gears(Large) [perform] : { B kit_quantity(Name, _, _, Large) } <- print("Completed large gears.");
-+!large_gears(Large) [perform] : { ~B kit_quantity(Name, _, _, Large) }
-<-
-	+!look_for_part(large) [perform],
-	+!set_grasp(large) [perform],
-	+!take_part(large) [perform],
-	+!look_for_slot(large) [perform],
-	+!place_part(large) [perform],
-	+!large_gears(Large) [perform];
-	 
-+!look_for_part(Size) [perform] : { B gripper(part), ~B gripper_grasped(_)}
-<-
-	 look_part(Size),
+	 move(Location),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_look_part(Size, Result) [perform],
-	 +part_found(Size);
+	 +!check_action_result_move(Location, Result) [perform];
 	 
-+!set_grasp(Size) [perform] : { B gripper(_), ~B gripper_grasped(_) }
++!close_gripper(Gear) [perform] : { ~B grasped(_), B gripper("open") }
 <-
-	 set_grasp(Size),
+	 close_gripper,
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_set_grasp(Size, Result) [perform],
-	 +grasp_set(Size);
+	 -gripper("open"),
+	 +gripper("close"),
+	 +grasped(Gear),
+	 +!check_action_result_close_gripper(Result) [perform];
 	 
-+!take_part(Size) [perform] : { B gripper(_), ~B gripper_grasped(_), B tray(Size, Quantity), 0 < Quantity, B part_found(Size), B grasp_set(Size) }
++!open_gripper(Gear) [perform] : { B grasped(Gear), B gripper("close") }
 <-
-	 take_part(Size),
+	 open_gripper,
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_take_part(Size, Result) [perform],
-	 -tray(Size, Quantity),
-	 minus(Quantity, 1, NewQuantity),
-	 +tray(Size, NewQuantity),
-	 -part_found(Size),
-	 -grasp_set(Size),
-	 +gripper_grasped(Size);
+	 -gripper("close"),
+	 +gripper("open"),
+	 +!check_action_result_open_gripper(Result) [perform];
 	 
-+!look_for_slot(Size) [perform] : { B gripper_grasped(Size) }
++!check_action_result_move(Location, "true") [perform] : { True };
++!check_action_result_move(Location, "false") [perform] : { True }
 <-
-	 look_slot(Size),
+	 move(Location),
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_look_slot(Size, Result) [perform],
-	 +slot_found(Size);
+	 +!check_action_result_move(Location, Result) [perform];
 	 
-+!place_part(small) [perform] : { B kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity), B kit(Name, MaxSmallQuantity, MaxMediumQuantity, MaxLargeQuantity), SmallQuantity < MaxSmallQuantity }
++!check_action_result_open_gripper("true") [perform] : { True };
++!check_action_result_open_gripper("false") [perform] : { True }
 <-
-	 place_part(Size),
+	 open_gripper,
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_place_part(Size, Result) [perform],
-	 -slot_found(Size),
-	 -gripper_grasped(Size),
-	 -kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity),
-	 sum(SmallQuantity, 1, NewSmallQuantity),
-	 +kit_quantity(Name, NewSmallQuantity, MediumQuantity, LargeQuantity);
-+!place_part(medium) [perform] : { B kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity), B kit(Name, MaxSmallQuantity, MaxMediumQuantity, MaxLargeQuantity), MediumQuantity < MaxMediumQuantity }
-<-
-	 place_part(Size),
-	 *action_result(Result),
-	 -action_result(Result),
-	 +!check_action_result_place_part(Size, Result) [perform],
-	 -slot_found(Size),
-	 -gripper_grasped(Size),
-	 -kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity),
-	 sum(MediumQuantity, 1, NewMediumQuantity),
-	 +kit_quantity(Name, SmallQuantity, NewMediumQuantity, LargeQuantity);
-+!place_part(large) [perform] : { B kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity), B kit(Name, MaxSmallQuantity, MaxMediumQuantity, MaxLargeQuantity), LargeQuantity < MaxLargeQuantity }
-<-
-	 place_part(Size),
-	 *action_result(Result),
-	 -action_result(Result),
-	 +!check_action_result_place_part(Size, Result) [perform],
-	 -slot_found(Size),
-	 -gripper_grasped(Size),
-	 -kit_quantity(Name, SmallQuantity, MediumQuantity, LargeQuantity),
-	 sum(LargeQuantity, 1, NewLargeQuantity),
-	 +kit_quantity(Name, SmallQuantity, MediumQuantity, NewLargeQuantity);
+	 +!check_action_result_open_gripper(Result) [perform];
 	 
-+!check_action_result_look_part(Size, "true") [perform] : { True };
-+!check_action_result_look_part(Size, "false") [perform] : { True }
++!check_action_result_close_gripper("true") [perform] : { True };
++!check_action_result_close_gripper("false") [perform] : { True }
 <-
-	 look_part(Size),
+	 close_gripper,
 	 *action_result(Result),
 	 -action_result(Result),
-	 +!check_action_result_look_part(Size, Result) [perform];
-	 
-+!check_action_result_set_grasp(Size, "true") [perform] : { True };
-+!check_action_result_set_grasp(Size, "false") [perform] : { True }
-<-
-	 set_grasp(Size),
-	 *action_result(Result),
-	 -action_result(Result),
-	 +!check_action_result_set_grasp(Size, Result) [perform];
-	 
-+!check_action_result_take_part(Size, "true") [perform] : { True };
-+!check_action_result_take_part(Size, "false") [perform] : { True }
-<-
-	 take_part(Size),
-	 *action_result(Result),
-	 -action_result(Result),
-	 +!check_action_result_take_part(Size, Result) [perform];
-	 
-+!check_action_result_look_slot(Size, "true") [perform] : { True };
-+!check_action_result_look_slot(Size, "false") [perform] : { True }
-<-
-	 look_slot(Size),
-	 *action_result(Result),
-	 -action_result(Result),
-	 +!check_action_result_look_slot(Size, Result) [perform];
-	 
-+!check_action_result_place_part(Size, "true") [perform] : { True };
-+!check_action_result_place_part(Size, "false") [perform] : { True }
-<-
-	 place_part(Size),
-	 *action_result(Result),
-	 -action_result(Result),
-	 +!check_action_result_place_part(Size, Result) [perform];
-	 
+	 +!check_action_result_close_gripper(Result) [perform];
