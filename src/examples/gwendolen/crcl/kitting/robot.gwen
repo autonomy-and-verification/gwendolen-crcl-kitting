@@ -7,14 +7,16 @@ gripper("open")
 gear_tray(gear_tray_1,"small",["gear_small_1","gear_small_2","gear_small_3"])
 gear_tray(gear_tray_1,"medium",["gear_medium_1","gear_medium_2","gear_medium_3"])
 gear_tray(gear_tray_1,"large",["empty","gear_large_2","gear_large_3"])
+kit_tray(kit_tray_1,[slot("kit_slot_1","small","empty"),slot("kit_slot_2","small","empty"),slot("kit_slot_3","medium","empty"),slot("kit_slot_4","large","empty")])
 
 :Reasoning Rules:
 
 :Initial Goals:
+new_tray [perform]
 
 :Plans:
 
-+!kitting(IdKitTray, Id, Size)  [perform] : { ~B grasped(_), B gear_tray(IdGearTray, Size, Slots) }
++!kitting(Id, Size)  [perform] : { ~B grasped(_), B gear_tray(IdGearTray, Size, Slots) }
 <-
 	find_gear(Slots),
 	*gear(Gear),
@@ -23,9 +25,24 @@ gear_tray(gear_tray_1,"large",["empty","gear_large_2","gear_large_3"])
 	+!move(Id) [perform],
 	+!open_gripper(Gear) [perform];
 
-+kit(IdKitTray, Id, SizeSlot) : { True }
++!new_tray [perform] : { B kit_tray(IdKitTray,Slots) }
 <-
-	+!kitting(IdKitTray, Id, SizeSlot) [perform];
+	find_slot(Slots),
+	-kit_tray(IdKitTray,Slots),
+	+!loop [perform];
+	
++slot(Id, SizeSlot, Slot) : { True }
+<-	+slot_active(Id, SizeSlot, Slot);
+	
++!loop [perform] : { B slot_active(Id, SizeSlot, Slot) }
+<-
+	-slot_active(Id, SizeSlot, Slot),
+	+!kitting(Id, SizeSlot) [perform],
+	+!loop [perform];
++!loop [perform] : { True }
+<-
+	wait(2000),
+	+!loop [perform];
 	
 +!move(Location) [perform] : { True }
 <-
@@ -49,6 +66,7 @@ gear_tray(gear_tray_1,"large",["empty","gear_large_2","gear_large_3"])
 	 open_gripper,
 	 *action_result(Result),
 	 -action_result(Result),
+	 -grasped(Gear),
 	 -gripper("close"),
 	 +gripper("open"),
 	 +!check_action_result_open_gripper(Result) [perform];
