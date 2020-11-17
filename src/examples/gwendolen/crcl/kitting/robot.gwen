@@ -3,7 +3,6 @@ GWENDOLEN
 :name: robot
 
 :Initial Beliefs:
-gripper("open")
 gear_tray(gear_tray_1,"small",["gear_small_1","gear_small_2","gear_small_3"])
 gear_tray(gear_tray_1,"medium",["gear_medium_1","gear_medium_2","gear_medium_3"])
 gear_tray(gear_tray_1,"large",["empty","gear_large_2","gear_large_3"])
@@ -48,27 +47,18 @@ new_tray [perform]
 <-
 	 move(Location),
 	 *action_result(Result),
-	 -action_result(Result),
 	 +!check_action_result_move(Location, Result) [perform];
 	 
 +!close_gripper(Gear) [perform] : { ~B grasped(_), B gripper("open") }
 <-
 	 close_gripper,
 	 *action_result(Result),
-	 -action_result(Result),
-	 -gripper("open"),
-	 +gripper("close"),
-	 +grasped(Gear),
 	 +!check_action_result_close_gripper(Result) [perform];
 	 
-+!open_gripper(Gear) [perform] : { B grasped(Gear), B gripper("close") }
++!open_gripper(Gear) [perform] : { B grasped(Gear), B gripper("closed") }
 <-
 	 open_gripper,
 	 *action_result(Result),
-	 -action_result(Result),
-	 -grasped(Gear),
-	 -gripper("close"),
-	 +gripper("open"),
 	 +!check_action_result_open_gripper(Result) [perform];
 	 
 +!check_action_result_move(Location, "true") [perform] : { True };
@@ -76,7 +66,6 @@ new_tray [perform]
 <-
 	 move(Location),
 	 *action_result(Result),
-	 -action_result(Result),
 	 +!check_action_result_move(Location, Result) [perform];
 	 
 +!check_action_result_open_gripper("true") [perform] : { True };
@@ -84,7 +73,6 @@ new_tray [perform]
 <-
 	 open_gripper,
 	 *action_result(Result),
-	 -action_result(Result),
 	 +!check_action_result_open_gripper(Result) [perform];
 	 
 +!check_action_result_close_gripper("true") [perform] : { True };
@@ -92,5 +80,4 @@ new_tray [perform]
 <-
 	 close_gripper,
 	 *action_result(Result),
-	 -action_result(Result),
 	 +!check_action_result_close_gripper(Result) [perform];

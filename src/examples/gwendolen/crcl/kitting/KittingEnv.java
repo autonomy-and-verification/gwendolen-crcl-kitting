@@ -20,9 +20,16 @@ import java.util.Random;
 public class KittingEnv extends DefaultEnvironment{
 	static final String logname = "gwendolen.crcl.kitting.KittingEnv";
 	
+	Predicate gear = new Predicate("gear");
+	Predicate gripper = new Predicate("gripper");
+	Predicate action_res = new Predicate("action_result");
+	Predicate grasped = new Predicate("grasped");
 	
 	public KittingEnv() {
 		super();
+		
+		gripper.addTerm(new StringTermImpl("open"));
+		addPercept(gripper);
 		
 		System.out.println("Environment started.");
 		
@@ -47,7 +54,8 @@ public class KittingEnv extends DefaultEnvironment{
 			ListTerm slots = (ListTerm) act.getTerm(0);
 			for (Term slot : slots) {
 				if (!slot.toString().contains("empty")) {
-					Predicate gear = new Predicate("gear");
+					removePercept(gear);
+					gear = new Predicate("gear");
 					gear.addTerm(slot);
 					addPercept(gear);
 					break;
@@ -72,10 +80,25 @@ public class KittingEnv extends DefaultEnvironment{
 			if (!action_result) {
 				System.out.println("Action: "+actionname+" has failed!");
 			}
+			else {
+				removePercept(gripper);
+				gripper = new Predicate("gripper");
+				gripper.addTerm(new StringTermImpl("open"));
+				addPercept(gripper);
+				removePercept(grasped);
+			}
 		} else if (actionname.equals("close_gripper")) {
 			action_result = simulate_action(0.9, 1000);
 			if (!action_result) {
 				System.out.println("Action: "+actionname+" has failed!");
+			}
+			else {
+				removePercept(gripper);
+				gripper = new Predicate("gripper");
+				gripper.addTerm(new StringTermImpl("closed"));
+				addPercept(gripper);
+				grasped.addTerm(gear.getTerm(0));
+				addPercept(grasped);
 			}
 		} else if (actionname.equals("wait")) {
 			NumberTerm time = (NumberTerm) act.getTerm(0);
@@ -86,16 +109,8 @@ public class KittingEnv extends DefaultEnvironment{
 			}
 		}
 		if (!actionname.equals("print") && !actionname.equals("minus") && !actionname.equals("sum") && !actionname.equals("find_gear") && !actionname.equals("find_slot") && !actionname.equals("wait")) {
-			if (action_result) {
-				Predicate action_res = new Predicate("action_result");
-				action_res.addTerm(new StringTermImpl(""+false));
-				removePercept(action_res);
-			} else {
-				Predicate action_res = new Predicate("action_result");
-				action_res.addTerm(new StringTermImpl(""+true));
-				removePercept(action_res);
-			}
-			Predicate action_res = new Predicate("action_result");
+			removePercept(action_res);
+			action_res = new Predicate("action_result");
 			action_res.addTerm(new StringTermImpl(""+action_result));
 			addPercept(action_res);
 		}
