@@ -14,7 +14,7 @@ new_tray [perform]
 
 +!kitting(Id, Size)  [perform] : { ~B grasped(_), B gear_tray(IdGearTray, Size, Slots) }
 <-
-	find_gear(Slots),
+	find_gear(IdGearTray, Size, Slots),
 	*gear(Gear),
 	+!move(Gear) [perform],
 	+!close_gripper(Gear) [perform],

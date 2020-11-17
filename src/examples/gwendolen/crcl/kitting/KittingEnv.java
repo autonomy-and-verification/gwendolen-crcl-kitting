@@ -84,9 +84,22 @@ public class KittingEnv extends DefaultEnvironment{
 		System.out.println("Environment is simulating action: "+actionname);
 //		clearPercepts();
 		if (actionname.equals("find_gear")) {
-			ListTerm slots = (ListTerm) act.getTerm(0);
+			StringTerm id =  (StringTerm) act.getTerm(0);
+			StringTerm size =  (StringTerm) act.getTerm(1);
+			ListTerm slots = (ListTerm) act.getTerm(2);
 			for (Term slot : slots) {
 				if (!slot.toString().contains("empty")) {
+					gear_tray = new Predicate("gear_tray");
+					gear_tray.addTerm(id);
+					gear_tray.addTerm(size);
+					gear_tray.addTerm(slots);
+					removePercept(gear_tray);
+					gear_tray = new Predicate("gear_tray");
+					gear_tray.addTerm(id);
+					gear_tray.addTerm(size);
+					slots.remove(slot);
+					gear_tray.addTerm(slots);
+					addPercept(gear_tray);
 					removePercept(gear);
 					gear = new Predicate("gear");
 					gear.addTerm(slot);
