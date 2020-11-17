@@ -3,6 +3,7 @@ package gwendolen.crcl.kitting;
 import ail.mas.DefaultEnvironment;
 import ail.syntax.Action;
 import ail.syntax.ListTerm;
+import ail.syntax.ListTermImpl;
 import ail.syntax.NumberTerm;
 import ail.syntax.NumberTermImpl;
 import ail.syntax.Predicate;
@@ -11,6 +12,7 @@ import ail.syntax.StringTermImpl;
 import ail.syntax.Term;
 import ail.syntax.Unifier;
 import ail.util.AILexception;
+import ajpf.psl.MCAPLListTerm;
 import ajpf.psl.MCAPLTerm;
 
 import java.util.Random;
@@ -25,11 +27,42 @@ public class KittingEnv extends DefaultEnvironment{
 	Predicate action_res = new Predicate("action_result");
 	Predicate grasped = new Predicate("grasped");
 	
+	Predicate gear_tray = new Predicate("gear_tray");
+	
 	public KittingEnv() {
 		super();
 		
 		gripper.addTerm(new StringTermImpl("open"));
 		addPercept(gripper);
+		
+		gear_tray.addTerm(new StringTermImpl("gear_tray_1"));
+		gear_tray.addTerm(new StringTermImpl("small"));
+		ListTerm slots = new ListTermImpl();
+		slots.add(new StringTermImpl("gear_small_3"));
+		slots.add(new StringTermImpl("gear_small_2"));
+		slots.add(new StringTermImpl("gear_small_1"));
+		gear_tray.addTerm(slots);
+		addPercept(gear_tray);
+		
+		gear_tray = new Predicate("gear_tray");
+		gear_tray.addTerm(new StringTermImpl("gear_tray_2"));
+		gear_tray.addTerm(new StringTermImpl("medium"));
+		slots = new ListTermImpl();
+		slots.add(new StringTermImpl("gear_medium_3"));
+		slots.add(new StringTermImpl("gear_medium_2"));
+		slots.add(new StringTermImpl("gear_medium_1"));
+		gear_tray.addTerm(slots);
+		addPercept(gear_tray);
+		
+		gear_tray = new Predicate("gear_tray");
+		gear_tray.addTerm(new StringTermImpl("gear_tray_3"));
+		gear_tray.addTerm(new StringTermImpl("large"));
+		slots = new ListTermImpl();
+		slots.add(new StringTermImpl("gear_large_3"));
+		slots.add(new StringTermImpl("gear_large_2"));
+		slots.add(new StringTermImpl("gear_large_1"));
+		gear_tray.addTerm(slots);
+		addPercept(gear_tray);
 		
 		System.out.println("Environment started.");
 		
@@ -97,6 +130,7 @@ public class KittingEnv extends DefaultEnvironment{
 				gripper = new Predicate("gripper");
 				gripper.addTerm(new StringTermImpl("closed"));
 				addPercept(gripper);
+				grasped = new Predicate("grasped");
 				grasped.addTerm(gear.getTerm(0));
 				addPercept(grasped);
 			}

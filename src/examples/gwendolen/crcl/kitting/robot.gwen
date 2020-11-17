@@ -3,9 +3,6 @@ GWENDOLEN
 :name: robot
 
 :Initial Beliefs:
-gear_tray(gear_tray_1,"small",["gear_small_1","gear_small_2","gear_small_3"])
-gear_tray(gear_tray_1,"medium",["gear_medium_1","gear_medium_2","gear_medium_3"])
-gear_tray(gear_tray_1,"large",["empty","gear_large_2","gear_large_3"])
 kit_tray(kit_tray_1,[slot("kit_slot_1","small","empty"),slot("kit_slot_2","small","empty"),slot("kit_slot_3","medium","empty"),slot("kit_slot_4","large","empty")])
 
 :Reasoning Rules:
