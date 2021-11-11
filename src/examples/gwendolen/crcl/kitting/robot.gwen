@@ -3,7 +3,9 @@ GWENDOLEN
 :name: robot
 
 :Initial Beliefs:
-kit_tray(kit_tray_1,[slot("kit_slot_1","small","empty"),slot("kit_slot_2","small","empty"),slot("kit_slot_3","medium","empty"),slot("kit_slot_4","large","empty")])
+kit_tray(kit_tray_1,[slot("kit_slot_1","small","empty")])
+
+kit_tray(kit_tray_2,[slot("kit_slot_3","medium","empty"),slot("kit_slot_4","large","empty")])
 
 :Reasoning Rules:
 
@@ -35,6 +37,9 @@ new_tray [perform]
 	-slot_active(Id, SizeSlot, Slot),
 	+!kitting(Id, SizeSlot) [perform],
 	+!loop [perform];
++!loop [perform] : { B kit_tray(IdKitTray,Slots) }
+<-
+	+!new_tray [perform];
 +!loop [perform] : { True }
 <-
 	wait(2000),
