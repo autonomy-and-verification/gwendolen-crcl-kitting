@@ -1,0 +1,120 @@
+GWENDOLEN
+
+:name: lrmate
+
+:Initial Beliefs:
+gripper("open")
+
+gear_tray(sku_medium_gear_vessel16, "medium", ["sku_part_medium_gear17",
+	"sku_part_medium_gear18",
+	"sku_part_medium_gear19",
+	"sku_part_medium_gear20"])
+
+gear_tray(sku_large_gear_vessel21, "large", ["sku_part_large_gear22","sku_part_large_gear23"])
+
+kit_tray(sku_kit_m2l1_vessel14,[slot("sku_kit_m2l1_vessel14.slot1","medium","empty"),
+	slot("sku_kit_m2l1_vessel14.slot2","medium","empty"),
+	slot("sku_kit_m2l1_vessel14.slot3","large","empty")])
+
+kit_tray(sku_kit_m2l1_vessel15,[slot("sku_kit_m2l1_vessel15.slot1","medium","empty"),
+	slot("sku_kit_m2l1_vessel15.slot2","medium","empty"),
+	slot("sku_kit_m2l1_vessel15.slot3","large","empty")])
+
+:Reasoning Rules:
+
+:Initial Goals:
+new_tray [perform]
+
+:Plans:
+
++!new_tray [perform] : { B kit_tray(IdKitTray,Slots) }
+<-
+        print("new_tray"), 
+	find_slot(Slots),
+	-kit_tray(IdKitTray,Slots),
+	+!loop [perform];
+
++!loop [perform] : { B slot_active(Id, SizeSlot, Slot) }
+<-
+        print("loop perform"), 
+	-slot_active(Id, SizeSlot, Slot),
+	+!kitting(Id, SizeSlot) [perform],
+	+!loop [perform];
+
++!kitting(Id, Size)  [perform] : { ~B grasped(_), B gear_tray(IdGearTray, Size, Slots) }
+<-
+        print("kitting"), 
+	find_gear(Slots),
+	*gear(Gear),
+	+!move(Gear) [perform],
+	+!close_gripper(Gear) [perform],
+	+!move(Id) [perform],
+	+!open_gripper(Gear) [perform];
+
++slot(Id, SizeSlot, Slot) : { True }
+<-	
+        print("slot Id SizeSlot Slot "), 
+       +slot_active(Id, SizeSlot, Slot);
+	
++!loop [perform] : { B kit_tray(IdKitTray,Slots) } 
+<-
+      +!new_tray [perform];
+
+
++!loop [perform] : { True }
+<-
+        printWorld(1),
+	wait(2000),
+	+!loop [perform];
+	
++!move(Location) [perform] : { True }
+<-
+        print("move"), 
+ 	 move(Location),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_move(Location, Result) [perform];
+	 
++!close_gripper(Gear) [perform] : { ~B grasped(_), B gripper("open") }
+<-
+	 close_gripper,
+	 *action_result(Result),
+	 -action_result(Result),
+	 -gripper("open"),
+	 +gripper("close"),
+	 +grasped(Gear),
+	 +!check_action_result_close_gripper(Result) [perform];
+	 
++!open_gripper(Gear) [perform] : { B grasped(Gear), B gripper("close") }
+<-
+	 open_gripper,
+	 *action_result(Result),
+	 -action_result(Result),
+	 -grasped(Gear),
+	 -gripper("close"),
+	 +gripper("open"),
+	 +!check_action_result_open_gripper(Result) [perform];
+	 
++!check_action_result_move(Location, "true") [perform] : { True };
++!check_action_result_move(Location, "false") [perform] : { True }
+<-
+	 move(Location),
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_move(Location, Result) [perform];
+	 
++!check_action_result_open_gripper("true") [perform] : { True };
++!check_action_result_open_gripper("false") [perform] : { True }
+<-
+	 open_gripper,
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_open_gripper(Result) [perform];
+	 
++!check_action_result_close_gripper("true") [perform] : { True };
++!check_action_result_close_gripper("false") [perform] : { True }
+<-
+	 close_gripper,
+	 *action_result(Result),
+	 -action_result(Result),
+	 +!check_action_result_close_gripper(Result) [perform];

@@ -1,0 +1,118 @@
+START GWENDOLEN TRACE
+
+new_tray
+	find_slot(null)
+slot Id SizeSlot Slot 
+slot Id SizeSlot Slot 
+slot Id SizeSlot Slot 
+loop perform
+kitting
+	find_gear(null)
+take_part
+	take_part(sku_part_medium_gear17)
+check_action_result_take_part T
+place_part
+	place_part(sku_kit_m2l1_vessel14.slot1)
+check_action_result_place_part T
+loop perform
+kitting
+	find_gear(null)
+take_part
+	take_part(sku_part_medium_gear18)
+check_action_result_take_part T
+place_part
+	place_part(sku_kit_m2l1_vessel14.slot2)
+check_action_result_place_part T
+loop perform
+kitting
+	find_gear(null)
+take_part
+	take_part(sku_part_large_gear22)
+check_action_result_take_part droppedGear
+	reachable_gear(sku_part_large_gear22)
+check_action_result_take_part reachableGear
+	take_part(sku_part_large_gear22)
+check_action_result_take_part T
+place_part
+	place_part(sku_kit_m2l1_vessel14.slot3)
+check_action_result_place_part T
+loop new_tray
+	printPercepts(1)
+List of things that all agents can perceive
+[slot(sku_kit_m2l1_vessel14.slot3,large,empty), slot(sku_kit_m2l1_vessel14.slot2,medium,empty), slot(sku_kit_m2l1_vessel14.slot1,medium,empty), action_result(false)]
+lrmate
+=============
+After Stage StageD :
+[action_result/1-action_result(false)[source(percept)], , dropped_gear/1-dropped_gear(False)[source(self)], , gear_tray/3-gear_tray(sku_large_gear_vessel21,large,[sku_part_large_gear22,sku_part_large_gear23,])[source(self)], gear_tray(sku_medium_gear_vessel16,medium,[sku_part_medium_gear17,sku_part_medium_gear18,sku_part_medium_gear19,sku_part_medium_gear20,])[source(self)], , gripper/1-gripper(open)[source(self)], , kit_tray/2-kit_tray(sku_kit_m2l1_vessel15,[slot(sku_kit_m2l1_vessel15.slot1,medium,empty),slot(sku_kit_m2l1_vessel15.slot2,medium,empty),slot(sku_kit_m2l1_vessel15.slot3,large,empty),])[source(self)], , pneumatic_fail/1-pneumatic_fail(False)[source(self)], , reachable_gear/1-reachable_gear(True)[source(self)], , robot_fault/1-robot_fault(False)[source(self)], , sensor_fault/1-sensor_fault(False)[source(self)], , slot/3-slot(sku_kit_m2l1_vessel14.slot1,medium,empty)[source(percept)], slot(sku_kit_m2l1_vessel14.slot2,medium,empty)[source(percept)], slot(sku_kit_m2l1_vessel14.slot3,large,empty)[source(percept)], , timeout/1-timeout(0)[source(self)], ]
+[loop/0-[_ploop()], new_tray/0-[_pnew_tray()]]
+[]
+[source(self)]:: 
+   *  +!_ploop()||True||printPercepts(1)()||[]
+   *  +!_ploop()||True||+!_pnew_tray()()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_pnew_tray()||True||null()||[]
+   *  start||True||null()||[]
+
+[]
+new_tray
+	find_slot(null)
+slot Id SizeSlot Slot 
+slot Id SizeSlot Slot 
+slot Id SizeSlot Slot 
+loop perform
+kitting
+	find_gear(null)
+take_part
+	take_part(sku_part_medium_gear19)
+check_action_result_take_part T
+place_part
+	place_part(sku_kit_m2l1_vessel15.slot1)
+check_action_result_place_part T
+loop perform
+kitting
+	find_gear(null)
+take_part
+	take_part(sku_part_medium_gear20)
+check_action_result_take_part T
+place_part
+	place_part(sku_kit_m2l1_vessel15.slot2)
+check_action_result_place_part T
+loop perform
+kitting
+	find_gear(null)
+take_part
+	take_part(sku_part_large_gear23)
+check_action_result_take_part T
+place_part
+	place_part(sku_kit_m2l1_vessel15.slot3)
+check_action_result_place_part T
+loop done T no beliefs
+	printWorld(1)
+	printPercepts(1)
+List of things that all agents can perceive
+[slot(sku_kit_m2l1_vessel14.slot3,large,empty), slot(sku_kit_m2l1_vessel14.slot2,medium,empty), slot(sku_kit_m2l1_vessel14.slot1,medium,empty), action_result(false), slot(sku_kit_m2l1_vessel15.slot1,medium,empty), slot(sku_kit_m2l1_vessel15.slot2,medium,empty), slot(sku_kit_m2l1_vessel15.slot3,large,empty)]
+lrmate
+=============
+After Stage StageD :
+[action_result/1-action_result(false)[source(percept)], , dropped_gear/1-dropped_gear(False)[source(self)], , gear_tray/3-gear_tray(sku_large_gear_vessel21,large,[sku_part_large_gear22,sku_part_large_gear23,])[source(self)], gear_tray(sku_medium_gear_vessel16,medium,[sku_part_medium_gear17,sku_part_medium_gear18,sku_part_medium_gear19,sku_part_medium_gear20,])[source(self)], , gripper/1-gripper(open)[source(self)], , pneumatic_fail/1-pneumatic_fail(False)[source(self)], , reachable_gear/1-reachable_gear(True)[source(self)], , robot_fault/1-robot_fault(False)[source(self)], , sensor_fault/1-sensor_fault(False)[source(self)], , slot/3-slot(sku_kit_m2l1_vessel14.slot1,medium,empty)[source(percept)], slot(sku_kit_m2l1_vessel14.slot2,medium,empty)[source(percept)], slot(sku_kit_m2l1_vessel14.slot3,large,empty)[source(percept)], slot(sku_kit_m2l1_vessel15.slot1,medium,empty)[source(percept)], slot(sku_kit_m2l1_vessel15.slot2,medium,empty)[source(percept)], slot(sku_kit_m2l1_vessel15.slot3,large,empty)[source(percept)], , timeout/1-timeout(0)[source(self)], ]
+[loop/0-[_ploop()], new_tray/0-[_pnew_tray()]]
+[]
+[source(self)]:: 
+   *  +!_ploop()||True||printPercepts(1)()||[]
+   *  +!_ploop()||True||wait(2000)()||[]
+      +!_ploop()||True||+!_ploop()()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_pnew_tray()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_ploop()||True||null()||[]
+   *  +!_pnew_tray()||True||null()||[]
+   *  start||True||null()||[]
+
+[]
+	wait(2000)
