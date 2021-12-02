@@ -1,4 +1,4 @@
-mas.file = C:\\Users\\michalos\\Documents\\agilityperformancemetrics\\Gwendolen\\RafaelCode\\ajpf2018\\src\\examples\\gwendolen\\crcl\\kitting\\robot.gwen
+mas.file = C:\\Users\\michalos\\Documents\\agilityperformancemetrics\\Gwendolen\\gwendolen-crcl-kitting-master\\ajpf2018\\src\\examples\\gwendolen\\crcl\\kitting\\robot.gwen
 mas.builder = gwendolen.GwendolenMASBuilder
 
 env = gwendolen.crcl.kitting.KittingEnv
