@@ -2,6 +2,7 @@
 *.class
 *.tokens
 bin/*
+logs/*
 
 # Test Outputs #
 bin/TEST*
