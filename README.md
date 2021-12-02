@@ -1,13 +1,10 @@
 # gwendolen-crcl-kitting----
 
 
-
-
+Gwendolen code for a simulation of a kitting problem, using an interface with CRCL.
 
 
 Note, these instructions are for compiling the simulated CRCL loopback test with the Gwendolen kitting crcl program on a WINDOWS 10 machine. If you follow these instructions the necessary 3<sup>rd</sup> party and CRCL jar files should already be included in the clone (you won't need to build the jars). 
-
-Gwendolen code for a simulation of a kitting problem, using an interface with CRCL.
 
 ## <a name="Install_Eclipse,_Launch"></a>Install Eclipse, Launch
 
