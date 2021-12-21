@@ -20,7 +20,6 @@ import static crcl.utils.CRCLPosemath.point;
 import static crcl.utils.CRCLPosemath.pose;
 import static crcl.utils.CRCLPosemath.vector;
 import static gwendolen.crcl.kitting.CRCLClient.incrementId;
-import static gwendolen.crcl.kitting.GwendolynCrclClient.crcl;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -278,7 +277,7 @@ public class TestCases {
             crcl.doDwell(0.1);
 
         } catch (Exception ex) {
-            Logger.getLogger(GwendolynCrclClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestCases.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

@@ -41,6 +41,16 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Inherited implementation of DefaultEnvironment/AILEnv. Implements AILEnv which is an interface to be satisfied 
+ * by any environment that is to interact with the AIL classes. The class KittingEnv is a 
+ * provides an ``action'' \gwendolen\ call which  connects  \gwendolen\  plans to the  
+ * physical ``real''  world. In essence \gwendolen\ does goal-directed planning using a belief 
+ * system in conjunction with the real world beliefs to in order to run a plan.
+ * 
+ * @author michalos
+ *
+ */
 public class KittingEnv extends DefaultEnvironment implements Runnable {
 	static final String logname = "gwendolen.crcl.kitting.KittingEnv";
 	static boolean bPrintWorldDone = false;
@@ -81,7 +91,7 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 
 	public boolean canReachWorld(double x, double y, double z) {
 		// hard code fanuc reachability numbers
-		double robotLength = 1.1631; // robot fully extended + 1/2 gripper length
+		double robotLength = 1.1631; // robot fully extended + 1/2 gripper length in meters
 		double elevation = 0.33; // robot on pedastal on table, not flat
 		double robotReach = Math.sqrt(robotLength * robotLength - elevation * elevation);
 		PmCartesian Base = new PmCartesian(-0.169, -1.140, 0.934191);
@@ -94,6 +104,9 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 
 	}
 
+	/**
+	 * Thread to detect human Proximity Violation. NOT USED OR TESTED.
+	 */
 	public void run() {
 		try {
 			while (bPlanning) {
@@ -112,6 +125,9 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 		}
 	}
 
+	/**
+	 * Override of DefaultEnvironment begin() statement
+	 */
 	public void begin() {
 		try {
 			super.begin();
@@ -150,6 +166,9 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 		}
 	}
 
+	/**
+	 * Override of DefaultEnvironment cleanup() statement
+	 */
 	public void cleanup() {
 		try {
 			super.cleanup();
@@ -166,12 +185,20 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 		super.configure(config);
 	}
 
+	/**
+	 * Add environment predicate. Save in predicate map for later deletion.
+	 * @param name of belief
+	 */
 	public void addMappedBelief(String name) {
 		Predicate p = predicatemap.get(name);
 		if (p == null)
 			p = predicatemap.put(name, new Predicate(name));
 		addPercept(p);
 	}
+	/**
+	 * If name of belief is found predicate map delete.
+	 * @param name of belief
+	 */
 	public void removeMappedBelief(String name) {
 		Predicate p = predicatemap.get(name);
 		if (p != null)
@@ -189,11 +216,6 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 
 		if (bHumanWSViolation && nCountdown < 0) {
 			addMappedBelief("humanProximityViolation");
-//			Predicate p = predicatemap.get("humanProximityViolation");
-//			if (p == null)
-//				p = predicatemap.put("humanProximityViolation", new Predicate("humanProximityViolation"));
-//			addPercept(p);
-
 			bHumanWSViolation = false;
 		}
 		nCountdown = nCountdown - 1;
@@ -245,7 +267,6 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 		}
 
 		else if (actionname.equals("place_part")) {
-			// action_result = simulate_action(0.9, 1000);
 			ListTerm locations = (ListTerm) act.getTerm(0);
 			if (crcl.isGear(locations.toString()))
 				gearname = locations.toString();
@@ -339,9 +360,6 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 			StringTerm args = (StringTerm) act.getTerm(0);
 			
 			removeMappedBelief(args.toString());
-//			Predicate p = predicatemap.get(args.toString());
-//			if (p != null)
-//				removePercept(p);
 		}
 
 		else if (actionname.equals("trace")) {
@@ -375,19 +393,6 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 				reportActionResult("true");
 			else
 				reportActionResult("false");
-				
-//			if (action_result) {
-//				action_resPredicate = new Predicate("action_result");
-//				action_resPredicate.addTerm(new StringTermImpl("" + false));
-//				removePercept(action_resPredicate);
-//			} else {
-//				Predicate action_resPredicate = new Predicate("action_result");
-//				action_resPredicate.addTerm(new StringTermImpl("" + true));
-//				removePercept(action_resPredicate);
-//			}
-//			Predicate action_res = new Predicate("action_result");
-//			action_res.addTerm(new StringTermImpl("" + action_result));
-//			addPercept(action_res);
 		}
 		// act.setLogLevel(AJPFLogger.FINER);
 
@@ -411,15 +416,7 @@ public class KittingEnv extends DefaultEnvironment implements Runnable {
 			action_resPredicate.addTerm(new StringTermImpl(last_action_result));
 			removePercept(action_resPredicate);
 		}
-//		if (action_result) {
-//			Predicate action_res = new Predicate("action_result");
-//			action_res.addTerm(new StringTermImpl("" + false));
-//			removePercept(action_res);
-//		} else {
-//			Predicate action_res = new Predicate("action_result");
-//			action_res.addTerm(new StringTermImpl("" + true));
-//			removePercept(action_res);
-//		}
+
 		last_action_result = action_result;
 		
 		Predicate action_resPredicate = new Predicate("action_result");
